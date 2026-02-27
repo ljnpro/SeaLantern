@@ -1,11 +1,28 @@
 #!/usr/bin/env sh
 
-if ! pnpm exec commitlint --version >/dev/null 2>&1; then
-  echo "缺少 commitlint 依赖，请先执行：pnpm install"
+run_bin() {
+  bin="$1"
+  shift
+
+  if command -v pnpm >/dev/null 2>&1; then
+    pnpm exec "$bin" "$@"
+    return $?
+  fi
+
+  if command -v npx >/dev/null 2>&1; then
+    npx --no-install "$bin" "$@"
+    return $?
+  fi
+
+  return 127
+}
+
+if ! run_bin commitlint --version >/dev/null 2>&1; then
+  echo "缺少 commitlint 依赖，请先执行：npm install 或 pnpm install"
   exit 1
 fi
 
-if ! pnpm exec commitlint --edit "$1" --quiet; then
+if ! run_bin commitlint --edit "$1" --quiet; then
   first_line="$(sed -n '1p' "$1" | tr -d '\r')"
   echo ""
   echo "提交信息不符合规范。格式应为：<type>: <描述> 或 <type>(scope): <描述>"

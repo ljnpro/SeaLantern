@@ -1,8 +1,25 @@
 #!/usr/bin/env sh
 
-if ! pnpm exec lint-staged --version >/dev/null 2>&1; then
-  echo "缺少 lint-staged 依赖，请先执行：pnpm install"
+run_bin() {
+  bin="$1"
+  shift
+
+  if command -v pnpm >/dev/null 2>&1; then
+    pnpm exec "$bin" "$@"
+    return $?
+  fi
+
+  if command -v npx >/dev/null 2>&1; then
+    npx --no-install "$bin" "$@"
+    return $?
+  fi
+
+  return 127
+}
+
+if ! run_bin lint-staged --version >/dev/null 2>&1; then
+  echo "缺少 lint-staged 依赖，请先执行：npm install 或 pnpm install"
   exit 1
 fi
 
-pnpm exec lint-staged
+run_bin lint-staged
