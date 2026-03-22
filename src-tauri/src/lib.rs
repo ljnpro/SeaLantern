@@ -8,13 +8,17 @@ mod utils;
 #[cfg(debug_assertions)]
 use commands::debug as debug_commands;
 
+use commands::backup as backup_commands;
 use commands::config as config_commands;
 use commands::downloader as download_commands;
+use commands::frp as frp_commands;
 use commands::java as java_commands;
 use commands::logging as logging_commands;
 use commands::mcs_plugin as mcs_plugin_commands;
 use commands::player as player_commands;
 use commands::plugin as plugin_commands;
+use commands::resource as resource_commands;
+use commands::scheduler as scheduler_commands;
 use commands::server as server_commands;
 use commands::settings as settings_commands;
 use commands::system as system_commands;
@@ -237,6 +241,38 @@ pub fn run() {
             logging_commands::get_logs,
             logging_commands::clear_logs,
             logging_commands::check_developer_mode,
+            // Backup management
+            backup_commands::create_backup,
+            backup_commands::list_backups,
+            backup_commands::get_backup_detail,
+            backup_commands::restore_backup,
+            backup_commands::delete_backup,
+            // Scheduled tasks
+            scheduler_commands::create_scheduled_task,
+            scheduler_commands::update_scheduled_task,
+            scheduler_commands::delete_scheduled_task,
+            scheduler_commands::list_scheduled_tasks,
+            scheduler_commands::toggle_scheduled_task,
+            scheduler_commands::get_task_execution_logs,
+            scheduler_commands::run_task_now,
+            // Resource management
+            resource_commands::search_resources,
+            resource_commands::get_resource_detail,
+            resource_commands::get_resource_versions,
+            resource_commands::install_resource,
+            resource_commands::get_installed_resources,
+            resource_commands::uninstall_resource,
+            resource_commands::check_resource_updates,
+            resource_commands::update_resource,
+            // FRP integration
+            frp_commands::download_frpc,
+            frp_commands::get_frpc_info,
+            frp_commands::save_frp_config,
+            frp_commands::get_frp_config,
+            frp_commands::delete_frp_config,
+            frp_commands::start_frpc,
+            frp_commands::stop_frpc,
+            frp_commands::get_frp_status,
             // 仅在 debug 构建（pnpm run tauri dev）下注册调试命令
             // 发布包（pnpm run tauri build）中此命令不存在，不会暴露给最终用户
             #[cfg(debug_assertions)]
@@ -254,6 +290,7 @@ pub fn run() {
                     }
                     "close" => {
                         // 直接关闭
+                        services::global::frp_manager().stop_all();
                         if settings.close_servers_on_exit {
                             services::global::server_manager().stop_all_servers();
                         }
@@ -543,6 +580,9 @@ pub fn run() {
 
             app.manage(manager.clone());
 
+            // Start scheduled tasks
+            services::global::scheduler().start_all_tasks();
+
             // 前端心跳看门狗：若长时间未收到心跳则自动退出进程
             {
                 let app_handle = app.handle().clone();
@@ -569,6 +609,7 @@ pub fn run() {
                                 "[Watchdog] frontend heartbeat lost, shutting down Sea Lantern",
                             );
 
+                            crate::services::global::frp_manager().stop_all();
                             let settings = crate::services::global::settings_manager().get();
                             if settings.close_servers_on_exit {
                                 crate::services::global::server_manager().stop_all_servers();
@@ -772,6 +813,7 @@ pub fn run() {
                         }
                     }
                     "quit" => {
+                        services::global::frp_manager().stop_all();
                         let settings = services::global::settings_manager().get();
                         if settings.close_servers_on_exit {
                             services::global::server_manager().stop_all_servers();

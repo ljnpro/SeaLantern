@@ -33,6 +33,30 @@ const routes = [
     meta: { titleKey: "common.player_manage", icon: "users" },
   },
   {
+    path: "/backup/:id?",
+    name: "backup",
+    component: () => import("@views/BackupView.vue"),
+    meta: { titleKey: "common.backup", icon: "archive" },
+  },
+  {
+    path: "/scheduler/:id?",
+    name: "scheduler",
+    component: () => import("@views/SchedulerView.vue"),
+    meta: { titleKey: "common.scheduler", icon: "clock" },
+  },
+  {
+    path: "/resources/:id?",
+    name: "resources",
+    component: () => import("@views/ResourceView.vue"),
+    meta: { titleKey: "common.resources", icon: "package" },
+  },
+  {
+    path: "/frp/:id?",
+    name: "frp",
+    component: () => import("@views/FrpView.vue"),
+    meta: { titleKey: "common.frp", icon: "globe" },
+  },
+  {
     path: "/plugins",
     name: "plugins",
     component: () => import("@views/PluginsView.vue"),

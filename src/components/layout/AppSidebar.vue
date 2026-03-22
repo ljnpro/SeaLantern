@@ -23,6 +23,10 @@ import {
   BarChart2,
   Sparkles,
   DownloadIcon,
+  Archive,
+  Clock,
+  Package,
+  Globe,
   type LucideIcon,
 } from "lucide-vue-next";
 import logoSvg from "@assets/logo.svg";
@@ -43,6 +47,10 @@ const iconMap: Record<string, LucideIcon> = {
   chart: BarChart2,
   sparkles: Sparkles,
   download: DownloadIcon,
+  archive: Archive,
+  clock: Clock,
+  package: Package,
+  globe: Globe,
 };
 
 function getNavIcon(name: string): LucideIcon {
@@ -118,6 +126,38 @@ const staticNavItems: NavItem[] = [
     icon: "users",
     labelKey: "common.player_manage",
     label: i18n.t("common.player_manage"),
+    group: "server",
+  },
+  {
+    name: "backup",
+    path: "/backup",
+    icon: "archive",
+    labelKey: "common.backup",
+    label: i18n.t("common.backup"),
+    group: "server",
+  },
+  {
+    name: "scheduler",
+    path: "/scheduler",
+    icon: "clock",
+    labelKey: "common.scheduler",
+    label: i18n.t("common.scheduler"),
+    group: "server",
+  },
+  {
+    name: "resources",
+    path: "/resources",
+    icon: "package",
+    labelKey: "common.resources",
+    label: i18n.t("common.resources"),
+    group: "server",
+  },
+  {
+    name: "frp",
+    path: "/frp",
+    icon: "globe",
+    labelKey: "common.frp",
+    label: i18n.t("common.frp"),
     group: "server",
   },
   {

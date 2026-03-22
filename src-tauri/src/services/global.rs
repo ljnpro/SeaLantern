@@ -3,10 +3,14 @@
 //! 所有函数都基于 OnceLock 懒初始化，在进程生命周期内保持 `&'static` 引用。
 //! 注意：`mod_manager()` 目前仍然使用 `expect("Failed to initialize ModManager")`
 //! 在初始化失败时 panic，属于启动期失败场景，而非正常运行期的业务错误。
+use super::backup_manager::BackupManager;
+use super::frp_manager::FrpManager;
 use super::i18n::I18nService;
 use super::join_manager::JoinManager;
 use super::mcs_plugin_manager::m_PluginManager;
 use super::mod_manager::ModManager;
+use super::resource_manager::ResourceManager;
+use super::scheduler::SchedulerService;
 use super::server_id_manager::ServerIdManager;
 use super::server_manager::ServerManager;
 use super::settings_manager::SettingsManager;
@@ -50,6 +54,26 @@ pub fn server_id_manager() -> &'static ServerIdManager {
 pub fn m_plugin_manager() -> &'static m_PluginManager {
     static INSTANCE: OnceLock<m_PluginManager> = OnceLock::new();
     INSTANCE.get_or_init(m_PluginManager::new)
+}
+
+pub fn backup_manager() -> &'static BackupManager {
+    static INSTANCE: OnceLock<BackupManager> = OnceLock::new();
+    INSTANCE.get_or_init(BackupManager::new)
+}
+
+pub fn scheduler() -> &'static SchedulerService {
+    static INSTANCE: OnceLock<SchedulerService> = OnceLock::new();
+    INSTANCE.get_or_init(SchedulerService::new)
+}
+
+pub fn resource_manager() -> &'static ResourceManager {
+    static INSTANCE: OnceLock<ResourceManager> = OnceLock::new();
+    INSTANCE.get_or_init(|| ResourceManager::new().expect("Failed to initialize ResourceManager"))
+}
+
+pub fn frp_manager() -> &'static FrpManager {
+    static INSTANCE: OnceLock<FrpManager> = OnceLock::new();
+    INSTANCE.get_or_init(FrpManager::new)
 }
 
 static FRONTEND_LAST_HEARTBEAT: OnceLock<AtomicU64> = OnceLock::new();

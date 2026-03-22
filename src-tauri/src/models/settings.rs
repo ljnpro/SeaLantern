@@ -130,6 +130,10 @@ pub struct AppSettings {
     // 协议同意状态
     #[serde(default = "default_false")]
     pub agreed_to_terms: bool,
+
+    // CurseForge API key for resource management
+    #[serde(default)]
+    pub curseforge_api_key: String,
 }
 
 fn default_true() -> bool {
@@ -377,6 +381,9 @@ impl AppSettings {
         if let Some(v) = partial.agreed_to_terms {
             self.agreed_to_terms = v;
         }
+        if let Some(ref v) = partial.curseforge_api_key {
+            self.curseforge_api_key = v.clone();
+        }
     }
 }
 
@@ -454,6 +461,8 @@ pub struct PartialSettings {
     pub plugin_blocked_commands: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub agreed_to_terms: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub curseforge_api_key: Option<String>,
 }
 
 impl Default for AppSettings {
@@ -495,6 +504,7 @@ impl Default for AppSettings {
             plugin_allowed_commands: default_allowed_commands(),
             plugin_blocked_commands: default_blocked_commands(),
             agreed_to_terms: false,
+            curseforge_api_key: String::new(),
         }
     }
 }
