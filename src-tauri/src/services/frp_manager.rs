@@ -123,11 +123,8 @@ impl FrpManager {
                     #[cfg(unix)]
                     {
                         use std::os::unix::fs::PermissionsExt;
-                        std::fs::set_permissions(
-                            &target,
-                            std::fs::Permissions::from_mode(0o755),
-                        )
-                        .map_err(|e| format!("Failed to set permissions: {}", e))?;
+                        std::fs::set_permissions(&target, std::fs::Permissions::from_mode(0o755))
+                            .map_err(|e| format!("Failed to set permissions: {}", e))?;
                     }
                     break;
                 }
@@ -197,9 +194,7 @@ impl FrpManager {
 
         // Generate config file
         let config_content = generate_frpc_toml(&config);
-        let config_path = self
-            .frpc_dir()
-            .join(format!("{}.toml", server_id));
+        let config_path = self.frpc_dir().join(format!("{}.toml", server_id));
         std::fs::write(&config_path, &config_content)
             .map_err(|e| format!("Failed to write frpc config: {}", e))?;
 
@@ -223,10 +218,8 @@ impl FrpManager {
             processes.insert(server_id.to_string(), child);
         }
 
-        let public_address = format!(
-            "{}:{}",
-            config.frp_server.server_addr, config.tunnel.remote_port
-        );
+        let public_address =
+            format!("{}:{}", config.frp_server.server_addr, config.tunnel.remote_port);
 
         {
             let mut statuses = self.statuses.lock().map_err(|e| e.to_string())?;
@@ -398,7 +391,7 @@ fn save_configs(configs: &HashMap<String, FrpConfig>) -> Result<(), String> {
         std::fs::create_dir_all(parent)
             .map_err(|e| format!("Failed to create directory: {}", e))?;
     }
-    let content = serde_json::to_string_pretty(configs)
-        .map_err(|e| format!("Failed to serialize: {}", e))?;
+    let content =
+        serde_json::to_string_pretty(configs).map_err(|e| format!("Failed to serialize: {}", e))?;
     std::fs::write(&path, content).map_err(|e| format!("Failed to write: {}", e))
 }

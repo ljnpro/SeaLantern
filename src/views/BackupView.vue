@@ -61,11 +61,7 @@ async function handleCreated() {
         />
       </div>
       <div class="header-actions">
-        <SLButton
-          type="primary"
-          :disabled="!selectedServerId"
-          @click="showCreateModal = true"
-        >
+        <SLButton type="primary" :disabled="!selectedServerId" @click="showCreateModal = true">
           {{ i18n.t("backup.create") }}
         </SLButton>
       </div>

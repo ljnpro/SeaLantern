@@ -310,17 +310,11 @@ async fn execute_task_action(task: &ScheduledTask) -> Result<(), String> {
             server_manager.start_server(&task.server_id)?;
             Ok(())
         }
-        TaskType::RunBackup {
-            incremental,
-            include_paths,
-        } => {
+        TaskType::RunBackup { incremental, include_paths } => {
             let backup_manager = crate::services::global::backup_manager();
             let req = CreateBackupRequest {
                 server_id: task.server_id.clone(),
-                name: Some(format!(
-                    "scheduled-{}",
-                    chrono::Local::now().format("%Y%m%d-%H%M%S")
-                )),
+                name: Some(format!("scheduled-{}", chrono::Local::now().format("%Y%m%d-%H%M%S"))),
                 incremental: *incremental,
                 include_paths: include_paths.clone(),
             };

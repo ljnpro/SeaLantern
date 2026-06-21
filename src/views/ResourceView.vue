@@ -58,20 +58,11 @@ watch(selectedServerId, async (sid) => {
       </div>
     </div>
 
-    <SLTabBar
-      v-model="activeTab"
-      :tabs="tabs"
-    />
+    <SLTabBar v-model="activeTab" :tabs="tabs" />
 
     <div v-if="selectedServerId" class="tab-content">
-      <ResourceBrowser
-        v-if="activeTab === 'browse'"
-        :server-id="selectedServerId"
-      />
-      <InstalledResourceList
-        v-else
-        :server-id="selectedServerId"
-      />
+      <ResourceBrowser v-if="activeTab === 'browse'" :server-id="selectedServerId" />
+      <InstalledResourceList v-else :server-id="selectedServerId" />
     </div>
 
     <div v-else class="empty-state">

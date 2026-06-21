@@ -1,12 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { schedulerApi } from "@api/scheduler";
-import type {
-  ScheduledTask,
-  TaskType,
-  TaskSchedule,
-  TaskExecutionLog,
-} from "@api/scheduler";
+import type { ScheduledTask, TaskType, TaskSchedule, TaskExecutionLog } from "@api/scheduler";
 import { useLoading } from "@composables/useAsync";
 
 export const useSchedulerStore = defineStore("scheduler", () => {
@@ -18,9 +13,7 @@ export const useSchedulerStore = defineStore("scheduler", () => {
   async function refreshTasks(serverId: string) {
     error.value = null;
     try {
-      tasks.value = await withLoading(() =>
-        schedulerApi.listTasks(serverId),
-      );
+      tasks.value = await withLoading(() => schedulerApi.listTasks(serverId));
     } catch (e) {
       error.value = String(e);
     }

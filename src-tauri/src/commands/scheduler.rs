@@ -12,16 +12,11 @@ pub fn create_scheduled_task(
     task_type: serde_json::Value,
     schedule: serde_json::Value,
 ) -> Result<ScheduledTask, String> {
-    let task_type: TaskType = serde_json::from_value(task_type)
-        .map_err(|e| format!("Invalid task_type: {}", e))?;
-    let schedule: TaskSchedule = serde_json::from_value(schedule)
-        .map_err(|e| format!("Invalid schedule: {}", e))?;
-    let req = CreateTaskRequest {
-        server_id,
-        name,
-        task_type,
-        schedule,
-    };
+    let task_type: TaskType =
+        serde_json::from_value(task_type).map_err(|e| format!("Invalid task_type: {}", e))?;
+    let schedule: TaskSchedule =
+        serde_json::from_value(schedule).map_err(|e| format!("Invalid schedule: {}", e))?;
+    let req = CreateTaskRequest { server_id, name, task_type, schedule };
     scheduler().create_task(req)
 }
 

@@ -28,12 +28,7 @@ async function handleInstall() {
     const source = props.resource.source === "Modrinth" ? "modrinth" : "curseforge";
     const versions = await resourceApi.getVersions(source, props.resource.id, null, null);
     if (versions.length > 0) {
-      await resourceStore.install(
-        props.serverId,
-        source,
-        props.resource.id,
-        versions[0].id,
-      );
+      await resourceStore.install(props.serverId, source, props.resource.id, versions[0].id);
     }
   } catch {
     // error handled by store

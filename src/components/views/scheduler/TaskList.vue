@@ -88,9 +88,16 @@ async function handleDelete(taskId: string) {
             </span>
             <span
               v-if="task.last_run_result"
-              :class="{ success: task.last_run_result === 'success', failed: task.last_run_result !== 'success' }"
+              :class="{
+                success: task.last_run_result === 'success',
+                failed: task.last_run_result !== 'success',
+              }"
             >
-              {{ task.last_run_result === "success" ? i18n.t("scheduler.result_success") : i18n.t("scheduler.result_failed") }}
+              {{
+                task.last_run_result === "success"
+                  ? i18n.t("scheduler.result_success")
+                  : i18n.t("scheduler.result_failed")
+              }}
             </span>
           </div>
         </div>

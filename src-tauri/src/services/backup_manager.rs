@@ -13,9 +13,7 @@ pub struct BackupManager {
 
 impl BackupManager {
     pub fn new() -> Self {
-        BackupManager {
-            manifests: Mutex::new(HashMap::new()),
-        }
+        BackupManager { manifests: Mutex::new(HashMap::new()) }
     }
 
     fn backups_dir(&self) -> PathBuf {
@@ -34,8 +32,7 @@ impl BackupManager {
         let manifest_path = self.backup_dir(server_id, backup_id).join("manifest.json");
         let content = std::fs::read_to_string(&manifest_path)
             .map_err(|e| format!("Failed to read manifest: {}", e))?;
-        serde_json::from_str(&content)
-            .map_err(|e| format!("Failed to parse manifest: {}", e))
+        serde_json::from_str(&content).map_err(|e| format!("Failed to parse manifest: {}", e))
     }
 
     fn save_manifest(&self, server_id: &str, manifest: &BackupManifest) -> Result<(), String> {
@@ -80,10 +77,7 @@ impl BackupManager {
         for entry in dir {
             let entry = entry.map_err(|e| format!("Failed to read entry: {}", e))?;
             let path = entry.path();
-            let relative = path
-                .strip_prefix(base)
-                .unwrap_or(&path)
-                .to_path_buf();
+            let relative = path.strip_prefix(base).unwrap_or(&path).to_path_buf();
 
             if path.is_dir() {
                 entries.extend(Self::walk_directory(base, &relative)?);
@@ -128,9 +122,9 @@ impl BackupManager {
             .unwrap_or_default()
             .as_secs();
 
-        let name = req.name.unwrap_or_else(|| {
-            format!("backup-{}", chrono::Local::now().format("%Y%m%d-%H%M%S"))
-        });
+        let name = req
+            .name
+            .unwrap_or_else(|| format!("backup-{}", chrono::Local::now().format("%Y%m%d-%H%M%S")));
 
         let include_paths = if req.include_paths.is_empty() {
             vec!["world".to_string()]
@@ -196,8 +190,7 @@ impl BackupManager {
                     std::fs::create_dir_all(parent)
                         .map_err(|e| format!("Failed to create directory: {}", e))?;
                 }
-                std::fs::copy(src, &dest)
-                    .map_err(|e| format!("Failed to copy file: {}", e))?;
+                std::fs::copy(src, &dest).map_err(|e| format!("Failed to copy file: {}", e))?;
             }
         }
 
@@ -222,19 +215,13 @@ impl BackupManager {
             notes: None,
         };
 
-        let manifest = BackupManifest {
-            meta: meta.clone(),
-            files: file_entries,
-        };
+        let manifest = BackupManifest { meta: meta.clone(), files: file_entries };
 
         self.save_manifest(&req.server_id, &manifest)?;
 
         // Update cache
         if let Ok(mut cache) = self.manifests.lock() {
-            cache
-                .entry(req.server_id)
-                .or_default()
-                .push(meta.clone());
+            cache.entry(req.server_id).or_default().push(meta.clone());
         }
 
         Ok(meta)

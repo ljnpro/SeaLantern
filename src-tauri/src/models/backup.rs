@@ -41,10 +41,3 @@ pub struct CreateBackupRequest {
     pub incremental: bool,
     pub include_paths: Vec<String>,
 }
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RestoreBackupRequest {
-    pub server_id: String,
-    pub backup_id: String,
-    pub overwrite: bool,
-}

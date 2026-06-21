@@ -14,10 +14,8 @@ export const useResourceStore = defineStore("resource", () => {
   const installedResources = ref<InstalledResource[]>([]);
   const resourceDetail = ref<ResourceDetail | null>(null);
   const updates = ref<ResourceUpdateInfo[]>([]);
-  const { loading: searchLoading, withLoading: withSearchLoading } =
-    useLoading(false);
-  const { loading: installLoading, withLoading: withInstallLoading } =
-    useLoading(false);
+  const { loading: searchLoading, withLoading: withSearchLoading } = useLoading(false);
+  const { loading: installLoading, withLoading: withInstallLoading } = useLoading(false);
   const error = ref<string | null>(null);
 
   async function search(
@@ -32,15 +30,7 @@ export const useResourceStore = defineStore("resource", () => {
     error.value = null;
     try {
       searchResults.value = await withSearchLoading(() =>
-        resourceApi.search(
-          query,
-          gameVersion,
-          loader,
-          projectType,
-          source,
-          offset,
-          limit,
-        ),
+        resourceApi.search(query, gameVersion, loader, projectType, source, offset, limit),
       );
     } catch (e) {
       error.value = String(e);
@@ -65,12 +55,7 @@ export const useResourceStore = defineStore("resource", () => {
     }
   }
 
-  async function install(
-    serverId: string,
-    source: string,
-    projectId: string,
-    versionId: string,
-  ) {
+  async function install(serverId: string, source: string, projectId: string, versionId: string) {
     error.value = null;
     try {
       const installed = await withInstallLoading(() =>
@@ -88,9 +73,7 @@ export const useResourceStore = defineStore("resource", () => {
     error.value = null;
     try {
       await resourceApi.uninstall(serverId, resourceId);
-      installedResources.value = installedResources.value.filter(
-        (r) => r.id !== resourceId,
-      );
+      installedResources.value = installedResources.value.filter((r) => r.id !== resourceId);
     } catch (e) {
       error.value = String(e);
       throw e;
@@ -106,19 +89,13 @@ export const useResourceStore = defineStore("resource", () => {
     }
   }
 
-  async function updateResource(
-    serverId: string,
-    resourceId: string,
-    versionId: string,
-  ) {
+  async function updateResource(serverId: string, resourceId: string, versionId: string) {
     error.value = null;
     try {
       const updated = await withInstallLoading(() =>
         resourceApi.update(serverId, resourceId, versionId),
       );
-      const idx = installedResources.value.findIndex(
-        (r) => r.id === resourceId,
-      );
+      const idx = installedResources.value.findIndex((r) => r.id === resourceId);
       if (idx >= 0) installedResources.value[idx] = updated;
       return updated;
     } catch (e) {

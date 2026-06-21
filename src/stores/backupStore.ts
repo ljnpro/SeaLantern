@@ -61,10 +61,7 @@ export const useBackupStore = defineStore("backup", () => {
 
   async function loadDetail(serverId: string, backupId: string) {
     try {
-      currentDetail.value = await backupApi.getBackupDetail(
-        serverId,
-        backupId,
-      );
+      currentDetail.value = await backupApi.getBackupDetail(serverId, backupId);
     } catch (e) {
       error.value = String(e);
     }

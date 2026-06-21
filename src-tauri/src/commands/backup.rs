@@ -27,10 +27,7 @@ pub fn list_backups(server_id: String) -> Result<Vec<BackupMeta>, String> {
 }
 
 #[tauri::command]
-pub fn get_backup_detail(
-    server_id: String,
-    backup_id: String,
-) -> Result<BackupManifest, String> {
+pub fn get_backup_detail(server_id: String, backup_id: String) -> Result<BackupManifest, String> {
     manager().get_backup_detail(&server_id, &backup_id)
 }
 

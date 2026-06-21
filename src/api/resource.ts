@@ -88,10 +88,7 @@ export const resourceApi = {
     });
   },
 
-  async getDetail(
-    source: string,
-    projectId: string,
-  ): Promise<ResourceDetail> {
+  async getDetail(source: string, projectId: string): Promise<ResourceDetail> {
     return tauriInvoke("get_resource_detail", { source, projectId });
   },
 

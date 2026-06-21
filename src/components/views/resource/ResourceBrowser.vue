@@ -18,13 +18,7 @@ const sourceFilter = ref<string | null>(null);
 
 async function handleSearch() {
   if (!searchQuery.value.trim()) return;
-  await resourceStore.search(
-    searchQuery.value,
-    null,
-    null,
-    null,
-    sourceFilter.value,
-  );
+  await resourceStore.search(searchQuery.value, null, null, null, sourceFilter.value);
 }
 
 function handleKeydown(e: KeyboardEvent) {

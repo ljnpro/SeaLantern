@@ -29,12 +29,7 @@ async function handleCreate() {
       .split(",")
       .map((p) => p.trim())
       .filter(Boolean);
-    await backupStore.createBackup(
-      props.serverId,
-      name.value || null,
-      incremental.value,
-      paths,
-    );
+    await backupStore.createBackup(props.serverId, name.value || null, incremental.value, paths);
     emit("created");
   } catch {
     // error handled by store
@@ -54,10 +49,7 @@ async function handleCreate() {
 
       <div class="form-group">
         <label>{{ i18n.t("backup.include_paths") }}</label>
-        <SLInput
-          v-model="includePaths"
-          placeholder="world, world_nether, world_the_end"
-        />
+        <SLInput v-model="includePaths" placeholder="world, world_nether, world_the_end" />
       </div>
 
       <div class="form-group row">

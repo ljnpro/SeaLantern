@@ -31,11 +31,7 @@ function copyAddress() {
       <Wifi v-if="frpStore.status?.running" :size="20" />
       <WifiOff v-else :size="20" />
       <span>
-        {{
-          frpStore.status?.running
-            ? i18n.t("frp.status_running")
-            : i18n.t("frp.status_stopped")
-        }}
+        {{ frpStore.status?.running ? i18n.t("frp.status_running") : i18n.t("frp.status_stopped") }}
       </span>
     </div>
 
@@ -61,11 +57,7 @@ function copyAddress() {
         <Play :size="14" />
         {{ i18n.t("frp.start") }}
       </SLButton>
-      <SLButton
-        v-else
-        type="danger"
-        @click="handleStop"
-      >
+      <SLButton v-else type="danger" @click="handleStop">
         <Square :size="14" />
         {{ i18n.t("frp.stop") }}
       </SLButton>

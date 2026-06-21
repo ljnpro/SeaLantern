@@ -24,10 +24,7 @@ impl ResourceManager {
 
         let installed = load_installed();
 
-        Ok(ResourceManager {
-            client,
-            installed: Mutex::new(installed),
-        })
+        Ok(ResourceManager { client, installed: Mutex::new(installed) })
     }
 
     pub async fn search(&self, req: SearchRequest) -> Result<Vec<ResourceSearchResult>, String> {
@@ -106,10 +103,7 @@ impl ResourceManager {
             };
 
             results.push(ResourceSearchResult {
-                id: hit["project_id"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string(),
+                id: hit["project_id"].as_str().unwrap_or_default().to_string(),
                 name: hit["title"].as_str().unwrap_or_default().to_string(),
                 slug: hit["slug"].as_str().unwrap_or_default().to_string(),
                 summary: hit["description"].as_str().unwrap_or_default().to_string(),
@@ -331,10 +325,7 @@ impl ResourceManager {
                 self.get_modrinth_versions(project_id, game_version, loader)
                     .await
             }
-            "curseforge" => {
-                self.get_curseforge_versions(project_id, game_version)
-                    .await
-            }
+            "curseforge" => self.get_curseforge_versions(project_id, game_version).await,
             _ => Err("Unknown source".to_string()),
         }
     }
@@ -372,7 +363,11 @@ impl ResourceManager {
         for v in &body {
             let primary_file = v["files"]
                 .as_array()
-                .and_then(|files| files.iter().find(|f| f["primary"].as_bool().unwrap_or(false)))
+                .and_then(|files| {
+                    files
+                        .iter()
+                        .find(|f| f["primary"].as_bool().unwrap_or(false))
+                })
                 .or_else(|| v["files"].as_array().and_then(|f| f.first()));
 
             let (download_url, file_name, file_size) = if let Some(file) = primary_file {
@@ -387,10 +382,7 @@ impl ResourceManager {
 
             versions.push(ResourceVersion {
                 id: v["id"].as_str().unwrap_or_default().to_string(),
-                version_number: v["version_number"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string(),
+                version_number: v["version_number"].as_str().unwrap_or_default().to_string(),
                 name: v["name"].as_str().unwrap_or_default().to_string(),
                 game_versions: v["game_versions"]
                     .as_array()
@@ -415,25 +407,20 @@ impl ResourceManager {
                     .as_array()
                     .map(|a| {
                         a.iter()
-                            .filter_map(|d| {
-                                Some(ResourceDependency {
-                                    project_id: d["project_id"]
-                                        .as_str()
-                                        .unwrap_or_default()
-                                        .to_string(),
-                                    dependency_type: d["dependency_type"]
-                                        .as_str()
-                                        .unwrap_or("optional")
-                                        .to_string(),
-                                })
+                            .map(|d| ResourceDependency {
+                                project_id: d["project_id"]
+                                    .as_str()
+                                    .unwrap_or_default()
+                                    .to_string(),
+                                dependency_type: d["dependency_type"]
+                                    .as_str()
+                                    .unwrap_or("optional")
+                                    .to_string(),
                             })
                             .collect()
                     })
                     .unwrap_or_default(),
-                date_published: v["date_published"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string(),
+                date_published: v["date_published"].as_str().unwrap_or_default().to_string(),
             });
         }
 
@@ -478,14 +465,8 @@ impl ResourceManager {
         for file in data {
             versions.push(ResourceVersion {
                 id: file["id"].as_u64().unwrap_or(0).to_string(),
-                version_number: file["displayName"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string(),
-                name: file["displayName"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string(),
+                version_number: file["displayName"].as_str().unwrap_or_default().to_string(),
+                name: file["displayName"].as_str().unwrap_or_default().to_string(),
                 game_versions: file["gameVersions"]
                     .as_array()
                     .map(|a| {
@@ -495,38 +476,24 @@ impl ResourceManager {
                     })
                     .unwrap_or_default(),
                 loaders: Vec::new(),
-                download_url: file["downloadUrl"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string(),
-                file_name: file["fileName"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string(),
+                download_url: file["downloadUrl"].as_str().unwrap_or_default().to_string(),
+                file_name: file["fileName"].as_str().unwrap_or_default().to_string(),
                 file_size: file["fileLength"].as_u64().unwrap_or(0),
                 dependencies: file["dependencies"]
                     .as_array()
                     .map(|a| {
                         a.iter()
-                            .filter_map(|d| {
-                                Some(ResourceDependency {
-                                    project_id: d["modId"]
-                                        .as_u64()
-                                        .unwrap_or(0)
-                                        .to_string(),
-                                    dependency_type: match d["relationType"].as_u64().unwrap_or(0) {
-                                        3 => "required".to_string(),
-                                        _ => "optional".to_string(),
-                                    },
-                                })
+                            .map(|d| ResourceDependency {
+                                project_id: d["modId"].as_u64().unwrap_or(0).to_string(),
+                                dependency_type: match d["relationType"].as_u64().unwrap_or(0) {
+                                    3 => "required".to_string(),
+                                    _ => "optional".to_string(),
+                                },
                             })
                             .collect()
                     })
                     .unwrap_or_default(),
-                date_published: file["fileDate"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string(),
+                date_published: file["fileDate"].as_str().unwrap_or_default().to_string(),
             });
         }
 
@@ -573,8 +540,7 @@ impl ResourceManager {
             .map_err(|e| format!("Failed to read download: {}", e))?;
 
         let target_path = target_dir.join(&version.file_name);
-        std::fs::write(&target_path, &bytes)
-            .map_err(|e| format!("Failed to write file: {}", e))?;
+        std::fs::write(&target_path, &bytes).map_err(|e| format!("Failed to write file: {}", e))?;
 
         // Get project name
         let detail = self.get_detail(source, project_id).await?;
@@ -618,11 +584,7 @@ impl ResourceManager {
             .collect())
     }
 
-    pub fn uninstall_resource(
-        &self,
-        server_id: &str,
-        resource_id: &str,
-    ) -> Result<(), String> {
+    pub fn uninstall_resource(&self, server_id: &str, resource_id: &str) -> Result<(), String> {
         let mut list = self.installed.lock().map_err(|e| e.to_string())?;
 
         let resource = list
@@ -651,10 +613,7 @@ impl ResourceManager {
         Ok(())
     }
 
-    pub async fn check_updates(
-        &self,
-        server_id: &str,
-    ) -> Result<Vec<ResourceUpdateInfo>, String> {
+    pub async fn check_updates(&self, server_id: &str) -> Result<Vec<ResourceUpdateInfo>, String> {
         let installed = self.get_installed(server_id)?;
         let mut updates = Vec::new();
 
@@ -673,12 +632,7 @@ impl ResourceManager {
             };
 
             if let Ok(versions) = self
-                .get_versions(
-                    source_str,
-                    &resource.project_id,
-                    Some(&server.mc_version),
-                    None,
-                )
+                .get_versions(source_str, &resource.project_id, Some(&server.mc_version), None)
                 .await
             {
                 if let Some(latest) = versions.first() {

@@ -44,10 +44,7 @@ export const backupApi = {
     return tauriInvoke("list_backups", { serverId });
   },
 
-  async getBackupDetail(
-    serverId: string,
-    backupId: string,
-  ): Promise<BackupManifest> {
+  async getBackupDetail(serverId: string, backupId: string): Promise<BackupManifest> {
     return tauriInvoke("get_backup_detail", { serverId, backupId });
   },
 

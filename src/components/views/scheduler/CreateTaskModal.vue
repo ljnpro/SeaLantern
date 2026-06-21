@@ -60,12 +60,7 @@ async function handleCreate() {
   if (!name.value.trim()) return;
   creating.value = true;
   try {
-    await schedulerStore.createTask(
-      props.serverId,
-      name.value,
-      buildTaskType(),
-      buildSchedule(),
-    );
+    await schedulerStore.createTask(props.serverId, name.value, buildTaskType(), buildSchedule());
     emit("created");
   } catch {
     // error handled by store

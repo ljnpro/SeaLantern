@@ -43,12 +43,7 @@ pub async fn get_resource_versions(
     loader: Option<String>,
 ) -> Result<Vec<ResourceVersion>, String> {
     manager()
-        .get_versions(
-            &source,
-            &project_id,
-            game_version.as_deref(),
-            loader.as_deref(),
-        )
+        .get_versions(&source, &project_id, game_version.as_deref(), loader.as_deref())
         .await
 }
 
@@ -65,24 +60,17 @@ pub async fn install_resource(
 }
 
 #[tauri::command]
-pub fn get_installed_resources(
-    server_id: String,
-) -> Result<Vec<InstalledResource>, String> {
+pub fn get_installed_resources(server_id: String) -> Result<Vec<InstalledResource>, String> {
     manager().get_installed(&server_id)
 }
 
 #[tauri::command]
-pub fn uninstall_resource(
-    server_id: String,
-    resource_id: String,
-) -> Result<(), String> {
+pub fn uninstall_resource(server_id: String, resource_id: String) -> Result<(), String> {
     manager().uninstall_resource(&server_id, &resource_id)
 }
 
 #[tauri::command]
-pub async fn check_resource_updates(
-    server_id: String,
-) -> Result<Vec<ResourceUpdateInfo>, String> {
+pub async fn check_resource_updates(server_id: String) -> Result<Vec<ResourceUpdateInfo>, String> {
     manager().check_updates(&server_id).await
 }
 
